@@ -1,0 +1,164 @@
+CREATE TABLE accident_type_desc (
+    accident_type VARCHAR(10) PRIMARY KEY,
+    accident_type_desc TEXT
+);
+
+CREATE TABLE dca_code_desc (
+    dca_code VARCHAR(10) PRIMARY KEY,
+    dca_desc TEXT
+);
+
+CREATE TABLE road_geometry (
+    road_geometry VARCHAR(10) PRIMARY KEY,
+    road_geometry_desc TEXT
+);
+
+CREATE TABLE road_surface (
+    road_surface_type VARCHAR(10) PRIMARY KEY,
+    road_surface_type_desc TEXT
+);
+
+CREATE TABLE vehicle_type (
+    vehicle_type VARCHAR(10) PRIMARY KEY,
+    vehicle_type_desc TEXT
+);
+
+CREATE TABLE traffic_control (
+    traffic_control VARCHAR(10) PRIMARY KEY,
+    traffic_control_desc TEXT
+);
+
+CREATE TABLE injury (
+    inj_level VARCHAR(10) PRIMARY KEY,
+    inj_level_desc TEXT
+);
+
+CREATE TABLE road_user (
+    road_user_type VARCHAR(10) PRIMARY KEY,
+    road_user_type_desc TEXT
+);
+
+CREATE TABLE road_node (
+    node_id INTEGER PRIMARY KEY,
+    node_type TEXT,
+    amg_x NUMERIC,
+    amg_y NUMERIC,
+    lga_name TEXT,
+    deg_urban_name TEXT,
+    latitude NUMERIC,
+    longitude NUMERIC
+);
+
+
+CREATE TABLE accident_node (
+    accident_no TEXT,
+    node_id INTEGER,
+    road_route_1 INTEGER,
+    road_name TEXT,
+    road_type TEXT,
+    road_name_int TEXT,
+    road_type_int TEXT,
+    distance_location INTEGER,
+    direction_location TEXT,
+    PRIMARY KEY (accident_no, node_id),
+    FOREIGN KEY (node_id) REFERENCES road_node(node_id)
+);
+
+CREATE TABLE accidents (
+    accident_no VARCHAR(20) PRIMARY KEY,
+    accident_date DATE,
+    accident_time TIME,
+    accident_type VARCHAR(10),
+    day_of_week VARCHAR(10),
+    dca_code VARCHAR(10),
+    node_id INTEGER,
+    no_of_vehicles INTEGER,
+    no_killed INTEGER,
+    no_person_inj2 INTEGER,
+    no_person_inj3 INTEGER,
+    no_person_not_inj INTEGER,
+    police_attended INTEGER,
+    road_geometry VARCHAR(10),
+    light_condition VARCHAR(20),
+    severity VARCHAR(20),
+    speed_zone INTEGER,
+    rma TEXT,
+
+    CONSTRAINT fk_accident_type
+        FOREIGN KEY (accident_type)
+        REFERENCES accident_type_desc(accident_type),
+
+    CONSTRAINT fk_dca_code
+        FOREIGN KEY (dca_code)
+        REFERENCES dca_code_desc(dca_code),
+
+    CONSTRAINT fk_node
+        FOREIGN KEY (node_id)
+        REFERENCES road_node(node_id),
+
+    CONSTRAINT fk_road_geometry
+        FOREIGN KEY (road_geometry)
+        REFERENCES road_geometry(road_geometry)
+);
+
+
+CREATE TABLE vehicle_info (
+    accident_no VARCHAR(20),
+    vehicle_id TEXT,
+    vehicle_dca_code VARCHAR(10),
+    road_surface_type VARCHAR(10),
+    reg_state VARCHAR(10),
+    vehicle_type VARCHAR(10),
+    fuel_type VARCHAR(20),
+    no_of_cylinders INTEGER,
+    seating_capacity INTEGER,
+    occupants INTEGER,
+    driver_intent VARCHAR(20),
+    level_of_damage VARCHAR(20),
+
+    PRIMARY KEY (accident_no, vehicle_id),
+
+    CONSTRAINT fk_vehicle_accident
+        FOREIGN KEY (accident_no)
+        REFERENCES accidents(accident_no),
+
+    CONSTRAINT fk_vehicle_type
+        FOREIGN KEY (vehicle_type)
+        REFERENCES vehicle_type(vehicle_type),
+
+    CONSTRAINT fk_road_surface
+        FOREIGN KEY (road_surface_type)
+        REFERENCES road_surface(road_surface_type)
+);
+
+
+CREATE TABLE person_info (
+    accident_no VARCHAR(20),
+    person_id TEXT,
+    vehicle_id TEXT,
+    sex VARCHAR(10),
+    age_group VARCHAR(10),
+    inj_level VARCHAR(10),
+    seating_position VARCHAR(10),
+    road_user VARCHAR(10),
+    taken_hospital BOOLEAN,
+
+    PRIMARY KEY (accident_no, person_id),
+
+    CONSTRAINT fk_person_accident
+        FOREIGN KEY (accident_no)
+        REFERENCES accidents(accident_no),
+
+    CONSTRAINT fk_person_vehicle
+        FOREIGN KEY (accident_no, vehicle_id)
+        REFERENCES vehicle_info(accident_no, vehicle_id),
+
+    CONSTRAINT fk_injury
+        FOREIGN KEY (inj_level)
+        REFERENCES injury(inj_level),
+
+    CONSTRAINT fk_road_user
+        FOREIGN KEY (road_user)
+        REFERENCES road_user(road_user)
+);
+
