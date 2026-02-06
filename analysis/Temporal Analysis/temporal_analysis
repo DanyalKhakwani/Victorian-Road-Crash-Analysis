@@ -1,0 +1,20 @@
+--Temporal Analysis
+-- count of accidents by hour of day
+/*select strftime('%H',a.accident_time) as hour_of_day, count(a.accident_no) as no_of_accidents 
+from accidents a 
+group by hour_of_day*/
+
+-- count of accidents by year
+/*select strftime('%Y',a.accident_date) as year, count(a.accident_no) as no_of_accidents 
+from accidents a 
+group by year*/
+
+-- count of accidents by day of the week
+/*select strftime('%w',a.accident_date) as day, count(a.accident_no) as no_of_accidents 
+from accidents a 
+group by day*/
+
+-- count of accidents by month
+/*select strftime('%m',a.accident_date) as month, count(a.accident_no) as no_of_accidents 
+from accidents a 
+group by month*/
